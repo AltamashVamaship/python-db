@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORM Query Documentation - Python DB Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            overflow-y: auto;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: visible;
+            min-height: calc(100vh - 40px);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .nav-bar {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-bar a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .nav-bar a:hover {
+            background: #e9ecef;
+        }
+        
+        .content {
+            padding: 40px;
+            overflow-y: visible;
+            min-height: auto;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .section h4 {
+            color: #555;
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        .code-block::before {
+            content: 'Python';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .sql-block {
+            background: #1e3a5f;
+            color: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        .sql-block::before {
+            content: 'SQL';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .code-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .code-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .code-block code {
+            display: block;
+            white-space: pre;
+        }
+        
+        .example {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .example-description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .tip {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .tip::before {
+            content: '💡 Tip: ';
+            font-weight: bold;
+            color: #856404;
+        }
+        
+        .warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .warning::before {
+            content: '⚠️ Warning: ';
+            font-weight: bold;
+            color: #721c24;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .info::before {
+            content: 'ℹ️ Info: ';
+            font-weight: bold;
+            color: #0c5460;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 10px;
+            line-height: 1.8;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .table-of-contents {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+        
+        .table-of-contents h3 {
+            color: #667eea;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .table-of-contents ul {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .table-of-contents li {
+            margin-bottom: 10px;
+        }
+        
+        .table-of-contents a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .table-of-contents a:hover {
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .badge-basic {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-intermediate {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .badge-advanced {
+            background: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐍 ORM Query Documentation</h1>
+            <p>Complete guide from basic to advanced SQLAlchemy ORM queries</p>
+        </div>
+        
+        <div class="nav-bar">
+            <a href="/">← Back to Query Interface</a>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <span style="color: #666;">Python DB Interface</span>
+                <a href="/logout" style="color: #667eea; text-decoration: none; font-weight: 600; padding: 5px 10px; border-radius: 5px; background: #f0f0f0;">🚪 Logout</a>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="table-of-contents">
+                <h3>📑 Table of Contents</h3>
+                <ul>
+                    <li><a href="#getting-started">Getting Started</a></li>
+                    <li><a href="#basic-queries">Basic Queries</a></li>
+                    <li><a href="#filtering">Filtering & Conditions</a></li>
+                    <li><a href="#sorting">Sorting & Ordering</a></li>
+                    <li><a href="#aggregations">Aggregations & Functions</a></li>
+                    <li><a href="#joins">Joins & Relationships</a></li>
+                    <li><a href="#data-manipulation">Python Data Manipulation</a></li>
+                    <li><a href="#advanced">Advanced Techniques</a></li>
+                </ul>
+            </div>
+            
+            <!-- Getting Started -->
+            <div class="section" id="getting-started">
+                <h2>🚀 Getting Started</h2>
+                
+                <div class="info">
+                    All queries in this interface have access to a <code>session</code> object and all model classes. You don't need to import anything - just start writing!
+                </div>
+                
+                <h3>Available Models</h3>
+                <p>You have access to 199+ ORM models. Click "Load Tables" in the query interface to see all available models.</p>
+                
+                <div class="code-block">
+<code># Example: Query all entities
+result = session.query(Entities).limit(10).all()
+
+# Print results
+for entity in result:
+    print(entity)</code>
+                </div>
+                
+                <div class="tip">
+                    All 199+ tables have corresponding ORM models. Use the model classes directly - no need for dynamic queries!
+                </div>
+            </div>
+            
+            <!-- Basic Queries -->
+            <div class="section" id="basic-queries">
+                <h2>📝 Basic Queries <span class="badge badge-basic">BASIC</span></h2>
+                
+                <div class="example">
+                    <div class="example-title">1. Select All Records (Limited)</div>
+                    <div class="example-description">Get the first 10 records from a table</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>result = session.query(Entities).limit(10).all()
+print(f"Found {len(result)} entities")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT * 
+FROM entities 
+LIMIT 10;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">2. Select Specific Columns</div>
+                    <div class="example-description">Query only the columns you need</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>result = session.query(
+    Entities.id,
+    Entities.entity_name,
+    Entities.credit_balance
+).limit(20).all()
+
+for row in result:
+    print(f"ID: {row.id}, Name: {row.entity_name}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT id, entity_name, credit_balance 
+FROM entities 
+LIMIT 20;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">3. Count Records</div>
+                    <div class="example-description">Count total records in a table</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import func
+
+count = session.query(func.count(Entities.id)).scalar()
+print(f"Total entities: {count}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT COUNT(id) 
+FROM entities;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">4. Get First Record</div>
+                    <div class="example-description">Get the first matching record</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>first_entity = session.query(Entities).first()
+if first_entity:
+    print(f"First entity: {first_entity.entity_name}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT * 
+FROM entities 
+LIMIT 1;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">5. Get One Record (Raises Error if None)</div>
+                    <div class="example-description">Get exactly one record or raise an exception</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>try:
+    entity = session.query(Entities).filter(Entities.id == 1).one()
+    print(entity.entity_name)
+except Exception as e:
+    print(f"Error: {e}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT * 
+FROM entities 
+WHERE id = 1;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filtering -->
+            <div class="section" id="filtering">
+                <h2>🔍 Filtering & Conditions <span class="badge badge-intermediate">INTERMEDIATE</span></h2>
+                
+                <div class="example">
+                    <div class="example-title">1. Simple WHERE Clause</div>
+                    <div class="example-description">Filter records by a condition</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code># Equal to
+result = session.query(Entities).filter(
+    Entities.id == 1
+).all()
+
+# Not equal to
+result = session.query(Entities).filter(
+    Entities.id != 1
+).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>-- Equal to
+SELECT * 
+FROM entities 
+WHERE id = 1;
+
+-- Not equal to
+SELECT * 
+FROM entities 
+WHERE id != 1;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">2. Multiple Conditions (AND)</div>
+                    <div class="example-description">Combine multiple filters</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import and_
+
+result = session.query(Entities).filter(
+    and_(
+        Entities.credit_balance > 1000,
+        Entities.entity_name.like('%Food%')
+    )
+).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT * 
+FROM entities 
+WHERE credit_balance > 1000 
+  AND entity_name LIKE '%Food%';</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">3. OR Conditions</div>
+                    <div class="example-description">Match any of multiple conditions</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import or_
+
+result = session.query(Entities).filter(
+    or_(
+        Entities.id == 1,
+        Entities.id == 2,
+        Entities.id == 3
+    )
+).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT * 
+FROM entities 
+WHERE id = 1 
+   OR id = 2 
+   OR id = 3;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">4. IN Clause</div>
+                    <div class="example-description">Check if value is in a list</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>result = session.query(Entities).filter(
+    Entities.id.in_([1, 2, 3, 4, 5])
+).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT * 
+FROM entities 
+WHERE id IN (1, 2, 3, 4, 5);</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">5. LIKE (Pattern Matching)</div>
+                    <div class="example-description">Search for patterns in strings</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code># Contains
+result = session.query(Entities).filter(
+    Entities.entity_name.like('%Food%')
+).all()
+
+# Starts with
+result = session.query(Entities).filter(
+    Entities.entity_name.like('Food%')
+).all()
+
+# Ends with
+result = session.query(Entities).filter(
+    Entities.entity_name.like('%Food')
+).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>-- Contains
+SELECT * 
+FROM entities 
+WHERE entity_name LIKE '%Food%';
+
+-- Starts with
+SELECT * 
+FROM entities 
+WHERE entity_name LIKE 'Food%';
+
+-- Ends with
+SELECT * 
+FROM entities 
+WHERE entity_name LIKE '%Food';</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">6. Comparison Operators</div>
+                    <div class="example-description">Greater than, less than, between</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code># Greater than
+result = session.query(Entities).filter(
+    Entities.credit_balance > 1000
+).all()
+
+# Less than or equal
+result = session.query(Entities).filter(
+    Entities.credit_balance <= 500
+).all()
+
+# Between
+result = session.query(Entities).filter(
+    Entities.credit_balance.between(100, 1000)
+).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>-- Greater than
+SELECT * 
+FROM entities 
+WHERE credit_balance > 1000;
+
+-- Less than or equal
+SELECT * 
+FROM entities 
+WHERE credit_balance <= 500;
+
+-- Between
+SELECT * 
+FROM entities 
+WHERE credit_balance BETWEEN 100 AND 1000;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">7. NULL Checks</div>
+                    <div class="example-description">Filter for NULL or NOT NULL values</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code># IS NULL
+result = session.query(Entities).filter(
+    Entities.deleted_at.is_(None)
+).all()
+
+# IS NOT NULL
+result = session.query(Entities).filter(
+    Entities.deleted_at.isnot(None)
+).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>-- IS NULL
+SELECT * 
+FROM entities 
+WHERE deleted_at IS NULL;
+
+-- IS NOT NULL
+SELECT * 
+FROM entities 
+WHERE deleted_at IS NOT NULL;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sorting -->
+            <div class="section" id="sorting">
+                <h2>📊 Sorting & Ordering <span class="badge badge-intermediate">INTERMEDIATE</span></h2>
+                
+                <div class="example">
+                    <div class="example-title">1. Simple ORDER BY</div>
+                    <div class="example-description">Sort by a single column</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code># Ascending (default)
+result = session.query(Entities).order_by(
+    Entities.entity_name
+).limit(20).all()
+
+# Descending
+result = session.query(Entities).order_by(
+    Entities.entity_name.desc()
+).limit(20).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>-- Ascending (default)
+SELECT * 
+FROM entities 
+ORDER BY entity_name 
+LIMIT 20;
+
+-- Descending
+SELECT * 
+FROM entities 
+ORDER BY entity_name DESC 
+LIMIT 20;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">2. Multiple Column Sorting</div>
+                    <div class="example-description">Sort by multiple columns</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>result = session.query(Entities).order_by(
+    Entities.credit_balance.desc(),
+    Entities.entity_name.asc()
+).limit(20).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT * 
+FROM entities 
+ORDER BY credit_balance DESC, 
+         entity_name ASC 
+LIMIT 20;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">3. Sort by Expression</div>
+                    <div class="example-description">Sort using SQL functions</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import func
+
+result = session.query(Entities).order_by(
+    func.length(Entities.entity_name).desc()
+).limit(20).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT * 
+FROM entities 
+ORDER BY LENGTH(entity_name) DESC 
+LIMIT 20;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aggregations -->
+            <div class="section" id="aggregations">
+                <h2>📈 Aggregations & Functions <span class="badge badge-intermediate">INTERMEDIATE</span></h2>
+                
+                <div class="example">
+                    <div class="example-title">1. COUNT</div>
+                    <div class="example-description">Count records</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import func
+
+# Total count
+count = session.query(func.count(Entities.id)).scalar()
+
+# Count with filter
+count = session.query(func.count(Entities.id)).filter(
+    Entities.credit_balance > 1000
+).scalar()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>-- Total count
+SELECT COUNT(id) 
+FROM entities;
+
+-- Count with filter
+SELECT COUNT(id) 
+FROM entities 
+WHERE credit_balance > 1000;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">2. SUM</div>
+                    <div class="example-description">Sum of numeric values</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import func
+
+total = session.query(
+    func.sum(Entities.credit_balance)
+).scalar()
+print(f"Total credit balance: {total}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT SUM(credit_balance) 
+FROM entities;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">3. AVG (Average)</div>
+                    <div class="example-description">Calculate average</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import func
+
+avg_balance = session.query(
+    func.avg(Entities.credit_balance)
+).scalar()
+print(f"Average credit balance: {avg_balance}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT AVG(credit_balance) 
+FROM entities;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">4. MIN / MAX</div>
+                    <div class="example-description">Find minimum and maximum values</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import func
+
+min_balance = session.query(
+    func.min(Entities.credit_balance)
+).scalar()
+
+max_balance = session.query(
+    func.max(Entities.credit_balance)
+).scalar()
+
+print(f"Min: {min_balance}, Max: {max_balance}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT MIN(credit_balance), 
+       MAX(credit_balance) 
+FROM entities;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">5. GROUP BY</div>
+                    <div class="example-description">Group records and aggregate</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import func
+
+# Count by entity name
+result = session.query(
+    Entities.entity_name,
+    func.count(Entities.id).label('count')
+).group_by(Entities.entity_name).all()
+
+for row in result:
+    print(f"{row.entity_name}: {row.count}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT entity_name, 
+       COUNT(id) AS count 
+FROM entities 
+GROUP BY entity_name;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">6. HAVING Clause</div>
+                    <div class="example-description">Filter grouped results</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import func
+
+result = session.query(
+    Entities.entity_name,
+    func.sum(Entities.credit_balance).label('total')
+).group_by(Entities.entity_name).having(
+    func.sum(Entities.credit_balance) > 10000
+).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT entity_name, 
+       SUM(credit_balance) AS total 
+FROM entities 
+GROUP BY entity_name 
+HAVING SUM(credit_balance) > 10000;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Joins -->
+            <div class="section" id="joins">
+                <h2>🔗 Joins & Relationships <span class="badge badge-advanced">ADVANCED</span></h2>
+                
+                <div class="example">
+                    <div class="example-title">1. INNER JOIN</div>
+                    <div class="example-description">Join two tables</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code># Join entities with shipments
+result = session.query(
+    Entities.entity_name,
+    Shipments.awb_no,
+    Shipments.id
+).join(
+    Shipments, Entities.id == Shipments.accounts_entity_id
+).limit(20).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT e.entity_name, 
+       s.awb_no, 
+       s.id 
+FROM entities e
+INNER JOIN shipments s 
+  ON e.id = s.accounts_entity_id 
+LIMIT 20;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">2. LEFT JOIN</div>
+                    <div class="example-description">Include all records from left table</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>result = session.query(
+    Entities.entity_name,
+    Shipments.awb_no
+).outerjoin(
+    Shipments, Entities.id == Shipments.accounts_entity_id
+).limit(20).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT e.entity_name, 
+       s.awb_no 
+FROM entities e
+LEFT JOIN shipments s 
+  ON e.id = s.accounts_entity_id 
+LIMIT 20;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">3. Multiple Joins</div>
+                    <div class="example-description">Join multiple tables</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>result = session.query(
+    Entities.entity_name,
+    Shipments.awb_no,
+    CodTransactions.cod_amount
+).join(
+    Shipments, Entities.id == Shipments.accounts_entity_id
+).join(
+    CodTransactions, Shipments.awb_no == CodTransactions.awb_no
+).limit(20).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT e.entity_name, 
+       s.awb_no, 
+       ct.cod_amount 
+FROM entities e
+INNER JOIN shipments s 
+  ON e.id = s.accounts_entity_id
+INNER JOIN cod_transactions ct 
+  ON s.awb_no = ct.awb_no 
+LIMIT 20;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Manipulation -->
+            <div class="section" id="data-manipulation">
+                <h2>🐍 Python Data Manipulation <span class="badge badge-intermediate">INTERMEDIATE</span></h2>
+                
+                <div class="info">
+                    After getting query results, you can use Python to manipulate, analyze, and process the data!
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">1. Basic Data Processing</div>
+                    <div class="example-description">Process and print query results</div>
+                    <div class="code-block">
+<code>result = session.query(Entities).limit(10).all()
+
+# Print each record
+for entity in result:
+    print(f"ID: {entity.id}, Name: {entity.entity_name}")
+
+# Get total count
+print(f"\nTotal records: {len(result)}")</code>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">2. Filtering in Python</div>
+                    <div class="example-description">Filter results using Python list comprehensions</div>
+                    <div class="code-block">
+<code>result = session.query(Entities).limit(100).all()
+
+# Filter entities with credit balance > 1000
+high_balance = [e for e in result if e.credit_balance and e.credit_balance > 1000]
+
+print(f"Found {len(high_balance)} entities with balance > 1000")
+for entity in high_balance:
+    print(f"{entity.entity_name}: {entity.credit_balance}")</code>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">3. Sorting in Python</div>
+                    <div class="example-description">Sort results using Python</div>
+                    <div class="code-block">
+<code>result = session.query(Entities).limit(50).all()
+
+# Sort by credit balance (descending)
+sorted_entities = sorted(
+    result,
+    key=lambda x: x.credit_balance or 0,
+    reverse=True
+)
+
+print("Top 10 entities by credit balance:")
+for entity in sorted_entities[:10]:
+    print(f"{entity.entity_name}: {entity.credit_balance}")</code>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">4. Aggregations in Python</div>
+                    <div class="example-description">Calculate statistics using Python</div>
+                    <div class="code-block">
+<code>result = session.query(Entities).limit(100).all()
+
+# Calculate statistics
+balances = [e.credit_balance for e in result if e.credit_balance]
+
+if balances:
+    total = sum(balances)
+    avg = total / len(balances)
+    max_bal = max(balances)
+    min_bal = min(balances)
+    
+    print(f"Total: {total}")
+    print(f"Average: {avg:.2f}")
+    print(f"Max: {max_bal}")
+    print(f"Min: {min_bal}")</code>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">5. Grouping in Python</div>
+                    <div class="example-description">Group data using dictionaries</div>
+                    <div class="code-block">
+<code>result = session.query(Shipments).limit(100).all()
+
+# Group by entity_id
+grouped = {}
+for shipment in result:
+    entity_id = shipment.accounts_entity_id
+    if entity_id not in grouped:
+        grouped[entity_id] = []
+    grouped[entity_id].append(shipment)
+
+# Print summary
+for entity_id, shipments in grouped.items():
+    print(f"Entity {entity_id}: {len(shipments)} shipments")</code>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">6. Data Transformation</div>
+                    <div class="example-description">Transform data into different formats</div>
+                    <div class="code-block">
+<code>result = session.query(Entities).limit(10).all()
+
+# Convert to list of dictionaries
+entities_dict = [
+    {
+        'id': e.id,
+        'name': e.entity_name,
+        'balance': float(e.credit_balance) if e.credit_balance else 0
+    }
+    for e in result
+]
+
+# Print as JSON-like structure
+for entity in entities_dict:
+    print(entity)</code>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">7. Conditional Processing</div>
+                    <div class="example-description">Process data based on conditions</div>
+                    <div class="code-block">
+<code>result = session.query(Entities).limit(50).all()
+
+# Categorize entities
+high_balance = []
+medium_balance = []
+low_balance = []
+
+for entity in result:
+    balance = entity.credit_balance or 0
+    if balance > 5000:
+        high_balance.append(entity)
+    elif balance > 1000:
+        medium_balance.append(entity)
+    else:
+        low_balance.append(entity)
+
+print(f"High balance: {len(high_balance)}")
+print(f"Medium balance: {len(medium_balance)}")
+print(f"Low balance: {len(low_balance)}")</code>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">8. Working with Dates</div>
+                    <div class="example-description">Process and filter by dates</div>
+                    <div class="code-block">
+<code>from datetime import datetime, timedelta
+
+result = session.query(Entities).limit(100).all()
+
+# Filter entities created in last 30 days
+thirty_days_ago = datetime.now() - timedelta(days=30)
+recent = [e for e in result if e.created_at and e.created_at > thirty_days_ago]
+
+print(f"Entities created in last 30 days: {len(recent)}")
+
+# Group by creation date
+from collections import defaultdict
+by_date = defaultdict(list)
+for entity in result:
+    if entity.created_at:
+        date_key = entity.created_at.date()
+        by_date[date_key].append(entity)
+
+for date, entities in sorted(by_date.items()):
+    print(f"{date}: {len(entities)} entities")</code>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Advanced -->
+            <div class="section" id="advanced">
+                <h2>🚀 Advanced Techniques <span class="badge badge-advanced">ADVANCED</span></h2>
+                
+                <div class="example">
+                    <div class="example-title">1. Subqueries</div>
+                    <div class="example-description">Use subqueries for complex filtering</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import func
+
+# Subquery: entities with above-average credit balance
+subq = session.query(
+    func.avg(Entities.credit_balance)
+).scalar_subquery()
+
+result = session.query(Entities).filter(
+    Entities.credit_balance > subq
+).all()
+
+print(f"Found {len(result)} entities above average")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT * 
+FROM entities 
+WHERE credit_balance > (
+    SELECT AVG(credit_balance) 
+    FROM entities
+);</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">2. UNION</div>
+                    <div class="example-description">Combine results from multiple queries</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import union
+
+q1 = session.query(Entities.id, Entities.entity_name).filter(Entities.id < 10)
+q2 = session.query(Entities.id, Entities.entity_name).filter(Entities.id > 100)
+
+result = session.query(union(q1, q2)).all()</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT id, entity_name 
+FROM entities 
+WHERE id < 10
+UNION
+SELECT id, entity_name 
+FROM entities 
+WHERE id > 100;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">3. Window Functions</div>
+                    <div class="example-description">Use window functions for ranking</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import func
+
+result = session.query(
+    Entities.id,
+    Entities.entity_name,
+    Entities.credit_balance,
+    func.rank().over(
+        order_by=Entities.credit_balance.desc()
+    ).label('rank')
+).limit(20).all()
+
+for row in result:
+    print(f"Rank {row.rank}: {row.entity_name} - {row.credit_balance}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT id, 
+       entity_name, 
+       credit_balance,
+       RANK() OVER (ORDER BY credit_balance DESC) AS rank
+FROM entities 
+LIMIT 20;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">4. Case Statements</div>
+                    <div class="example-description">Use conditional logic in queries</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code>from sqlalchemy import case
+
+result = session.query(
+    Entities.entity_name,
+    case(
+        (Entities.credit_balance > 5000, "High"),
+        (Entities.credit_balance > 1000, "Medium"),
+        else_="Low"
+    ).label('balance_category')
+).limit(20).all()
+
+for row in result:
+    print(f"{row.entity_name}: {row.balance_category}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>SELECT entity_name,
+       CASE 
+         WHEN credit_balance > 5000 THEN 'High'
+         WHEN credit_balance > 1000 THEN 'Medium'
+         ELSE 'Low'
+       END AS balance_category
+FROM entities 
+LIMIT 20;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">5. Pagination</div>
+                    <div class="example-description">Implement pagination for large datasets</div>
+                    <div class="code-comparison">
+                        <div>
+                            <div class="code-block">
+<code># Page 1 (first 20 records)
+page = 1
+per_page = 20
+offset = (page - 1) * per_page
+
+result = session.query(Entities).order_by(
+    Entities.id
+).offset(offset).limit(per_page).all()
+
+print(f"Page {page}: {len(result)} records")
+for entity in result:
+    print(f"{entity.id}: {entity.entity_name}")</code>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="sql-block">
+<code>-- Page 1 (offset 0, limit 20)
+SELECT * 
+FROM entities 
+ORDER BY id 
+LIMIT 20 OFFSET 0;
+
+-- Page 2 (offset 20, limit 20)
+SELECT * 
+FROM entities 
+ORDER BY id 
+LIMIT 20 OFFSET 20;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example">
+                    <div class="example-title">6. Complex Data Analysis</div>
+                    <div class="example-description">Combine SQL and Python for analysis</div>
+                    <div class="code-block">
+<code># Get data
+result = session.query(
+    Entities.entity_name,
+    Entities.credit_balance,
+    func.count(Shipments.id).label('shipment_count')
+).outerjoin(
+    Shipments, Entities.id == Shipments.accounts_entity_id
+).group_by(Entities.id).limit(50).all()
+
+# Analyze in Python
+analysis = []
+for row in result:
+    balance = row.credit_balance or 0
+    shipments = row.shipment_count or 0
+    avg_per_shipment = balance / shipments if shipments > 0 else 0
+    
+    analysis.append({
+        'name': row.entity_name,
+        'balance': balance,
+        'shipments': shipments,
+        'avg_per_shipment': avg_per_shipment
+    })
+
+# Sort by average per shipment
+analysis.sort(key=lambda x: x['avg_per_shipment'], reverse=True)
+
+print("Top entities by average balance per shipment:")
+for item in analysis[:10]:
+    print(f"{item['name']}: {item['avg_per_shipment']:.2f}")</code>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tip">
+                Remember: All query results are automatically converted to dictionaries when printed, making them easy to work with in Python!
+            </div>
+            
+            <div style="text-align: center; margin-top: 50px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                <h3>Ready to Start Querying?</h3>
+                <p style="margin: 15px 0;">
+                    <a href="/" style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        Go to Query Interface →
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
