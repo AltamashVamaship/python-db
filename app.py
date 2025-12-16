@@ -12,7 +12,7 @@ from decimal import Decimal
 from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-change-this-in-production'  # Change this to a random secret key
+app.secret_key = '7f642e79e86cc408e07a801e0dfd8b8f7dd22d65a88f4b280b1cef4da87e73c7'  # Change this to a random secret key
 
 # Authentication credentials
 VALID_EMAIL = 'rahul.sharma@vamaship.com'
